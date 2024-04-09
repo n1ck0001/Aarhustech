@@ -102,10 +102,23 @@ public class Character
         int modifiedDealtDamage = dealtDamage;
         if (NumberGenerator.BelowPercentage(DealDamageModifyChance))
         {
-            modifiedDealtDamage = CalculateModifiedDealDamage(dealtDamage);
+            // Not allowed to change file but i added the writelines for testing 
+            Console.ForegroundColor = ConsoleColor.Blue;
+            Console.WriteLine("damage doubled as damager");
+            Console.ForegroundColor = ConsoleColor.White;
+            // ------------------- 
+            return modifiedDealtDamage = CalculateModifiedDealDamage(dealtDamage);
+        }
+        else
+        {  // Not allowed to change file but i added the writelines for testing 
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            Console.WriteLine("damage done normal as damager");
+            Console.ForegroundColor = ConsoleColor.White;
+            // ------------------- 
+            return modifiedDealtDamage;
         }
 
-        return modifiedDealtDamage;
+        //return modifiedDealtDamage;
     }
 
     /// <summary>
