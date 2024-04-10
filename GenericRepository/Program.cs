@@ -4,6 +4,16 @@ using System.Diagnostics;
 epoG<Car> items = new epoG<Car>();
 epoG<Employee> employees = new epoG<Employee>();
 epoG<Computer> Pcs = new epoG<Computer>();
+epoG<Phone> Phones = new epoG<Phone>();
+
+Phone phone1 = new Phone("phone1", "23232323");
+Phone phone2 = new Phone("phone2", "23232323");
+Phone phone3 = new Phone("phone3", "23232323");
+
+Phones.Insert(phone1.Name, phone1);
+Phones.Insert(phone2.Name, phone2);
+Phones.Insert(phone3.Name, phone3);
+
 
 Car car1 = new Car("123", 100);
 Car car2 = new Car("12", 1002);
@@ -39,4 +49,5 @@ Debug.WriteLine("----");
 employees.PrintAll();
 items.PrintAll();
 Pcs.PrintAll();
+Phones.PrintAll();
 
