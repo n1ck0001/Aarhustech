@@ -1,5 +1,5 @@
 ﻿
-public class Dog
+public class Dog : IComparable<Dog>
 {
     #region Properties
     public string Name { get; }
@@ -7,7 +7,7 @@ public class Dog
     public double Weight { get; }
     #endregion
 
-    #region Constructor
+    #region Constructor 
     public Dog(string name, int height, double weight)
     {
         Name = name;
@@ -20,6 +20,11 @@ public class Dog
     public override string ToString()
     {
         return $"{Name} is {Height} cm tall, and weighs {Weight} kgs.";
+    }
+
+    public int Compareto(int weight)
+    {
+        return weight.CompareTo(Height) ;
     }
     #endregion
 }
