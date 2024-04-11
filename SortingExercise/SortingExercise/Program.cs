@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace SortingExercise
 {
@@ -11,12 +12,25 @@ namespace SortingExercise
             List<int> numbers_lambda = new List<int> { 8, 3, 9, 2, 1, 5 };
 
             // Sort using anonymous method
-
             Console.WriteLine("Sorted List (Anonymous Method): " + string.Join(", ", numbers_Anonymous));
-
             // Sort using lambda expression
+            Console.WriteLine("Sorted List (Lambda Expression): " + string.Join(", ", numbers_lambda));
 
+            numbers_Anonymous.Sort(delegate (int a, int b)
+            {
+                return a.CompareTo(b);
+            });
+
+            numbers_lambda.Sort((a, b) =>  a.CompareTo(b));
+
+
+            // Sort using anonymous method
+            Console.WriteLine("Sorted List (Anonymous Method): " + string.Join(", ", numbers_Anonymous));
+            // Sort using lambda expression
             Console.WriteLine("Sorted List (Lambda Expression): " + string.Join(", ", numbers_lambda));
         }
+
+
+       
     }
 }
