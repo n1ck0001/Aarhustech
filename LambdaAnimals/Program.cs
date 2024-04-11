@@ -27,7 +27,7 @@ ConditionalPrint(dogs, item => item.Weight < d3.Weight);
 Debug.WriteLine("\nDogs with a name that contains an 'i':");
 ConditionalPrint(dogs, item => item.Name.Contains("i"));
 
- 
+
 
 static void ConditionalPrint<T>(List<T> objects, Predicate<T> pred)
 {
