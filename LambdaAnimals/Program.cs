@@ -10,43 +10,30 @@ List<Dog> dogs = new List<Dog> { d1, d2, d3, d4, d5 };
 
 // Print out all Dogs with a weight larger than 40 kg.
 
-foreach(var dog in dogs)
-{
-    if (dog.Weight > 40)
-    {
-        Debug.WriteLine(dog+ " Bigger than 40 kg");
-    }
-}
 
 
-foreach(var d in dogs)
-{
-    if(d.Weight < d3.Weight)
-    {
-        Debug.WriteLine(d + "Smaller than Rofus");
-    }
-}
+//// Print out all Dogs with a weight smaller than Rufus' weight.
 
-
-
-// Print out all Dogs with a weight smaller than Rufus' weight.
-
-foreach(var d in dogs)
-{
-    if (d.Name.Contains("i"))
-    {
-        Debug.WriteLine(d.Name + " Contains i");
-    }
-}
 
 // Print out all Dogs with a name that contains an "i"
 
+Debug.WriteLine("Dogs with a weight larger than 40 kg:");
+ConditionalPrint(dogs, item => item.Weight > 40);
+
+
+Debug.WriteLine("\nDogs with a weight smaller than Rufus' weight:");
+ConditionalPrint(dogs, item => item.Weight < d3.Weight);
+
+Debug.WriteLine("\nDogs with a name that contains an 'i':");
+ConditionalPrint(dogs, item => item.Name.Contains("i"));
+
+ 
 
 static void ConditionalPrint<T>(List<T> objects, Predicate<T> pred)
 {
     Console.WriteLine();
     foreach (var item in objects.FindAll(pred))
     {
-        Console.WriteLine(item);
+        Debug.WriteLine(item);
     }
 }
