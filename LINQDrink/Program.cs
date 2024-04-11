@@ -56,8 +56,6 @@ Console.WriteLine("Total alcohol in all drinks");
  Console.WriteLine(totalAlcohol);
 
 
-
-
 int totalDrinks = 0;    
 double Alcohol = 0;
 foreach(var item in drinksWithAlcohol)
