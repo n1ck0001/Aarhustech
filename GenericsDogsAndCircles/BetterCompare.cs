@@ -6,16 +6,26 @@ using System.Threading.Tasks;
 
 namespace GenericsDogsAndCircles
 {
-    public class BetterCompare
+    public class BetterCompare<T> where T : IComparable<T>
     {
+
         public BetterCompare() { }
 
-        public int Height { get; set; }
 
-        public int CompareTo(Dog x, Dog y)
+        // using generics of T
+        public T Largest(T x,T y, T z)
         {
-            //if(x == null || y == null) return 1;
-            return x.Height.CompareTo(y.Height);
+            T max = x;
+            if(y.CompareTo(max) > 0 )
+            {
+                max = y;
+            }
+
+            if(z.CompareTo(max) > 0 )
+            { 
+                max = z; 
+            }
+            return max;
         }
     }
 }

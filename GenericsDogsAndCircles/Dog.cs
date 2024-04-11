@@ -22,9 +22,11 @@ public class Dog : IComparable<Dog>
         return $"{Name} is {Height} cm tall, and weighs {Weight} kgs.";
     }
 
-    public int Compareto(int weight)
+    // not using generics of T
+    public int CompareTo(Dog other)
     {
-        return weight.CompareTo(Height) ;
+        if(other == null) return 1 ;
+        return this.Weight.CompareTo(other.Weight) ;
     }
     #endregion
 }

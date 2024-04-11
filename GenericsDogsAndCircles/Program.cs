@@ -1,5 +1,6 @@
 ﻿
 #region Dog objects
+using GenericsDogsAndCircles;
 using System.Diagnostics;
 
 Dog dog1 = new Dog("King", 70, 55);
@@ -14,7 +15,14 @@ Circle c3 = new Circle(8, 12, 7);
 #endregion
 
 #region ObjectComparer test
-ObjectComparer comparer = new ObjectComparer();
-Debug.WriteLine(comparer.LargestDog(dog1, dog2, dog3));
-Debug.WriteLine(comparer.LargestCircle(c1, c2, c3));
+//ObjectComparer comparer = new ObjectComparer();
+var betterComparer = new BetterCompare<Dog>();
+var betterComparerCircle = new BetterCompare<Circle>();
+
+var dog = betterComparer.Largest(dog1, dog2, dog3);
+Debug.WriteLine("Largest dog is: " + dog);
+
+var circle = betterComparerCircle.Largest(c1, c2, c3);
+
+Debug.WriteLine("Largest circle is: " + circle);
 #endregion
