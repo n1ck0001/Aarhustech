@@ -27,8 +27,7 @@ ConditionalPrint(dogs, item => item.Weight < d3.Weight);
 Debug.WriteLine("\nDogs with a name that contains an 'i':");
 ConditionalPrint(dogs, item => item.Name.Contains("i"));
 
-
-
+ 
 static void ConditionalPrint<T>(List<T> objects, Predicate<T> pred)
 {
     Console.WriteLine();
@@ -37,3 +36,16 @@ static void ConditionalPrint<T>(List<T> objects, Predicate<T> pred)
         Debug.WriteLine(item);
     }
 }
+
+
+ConditionalPrint2(dogs, item => item.Weight < d3.Weight, item => item.Name == item.Name);
+
+static void ConditionalPrint2<T>(List<T> objects, Predicate<T>pred1, Predicate<T>pred2)
+{
+    Console.WriteLine();
+    foreach(var item in objects.FindAll(item => pred1(item) && pred2(item)))
+    {
+        Debug.WriteLine(item);
+    }
+}
+
