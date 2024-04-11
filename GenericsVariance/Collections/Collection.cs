@@ -1,26 +1,28 @@
 ﻿
-public class Collection<T> : ICollectionGet<T>, ICollectionSet<T>
-{
-    private List<T> _collection;
+        using System.Collections.Generic;
 
-    public Collection()
-    {
-        _collection = new List<T>();
-    }
+        public class Collection<T> : ICollectionGet<T>, ICollectionSet<T>
+        {
+            private List<T> _collection;
 
-    public int Count
-    {
-        get { return _collection.Count; }
-    }
+            public Collection()
+            {
+                _collection = new List<T>();
+            }
 
-    public T Get(int index)
-    {
-        return _collection[index];
-    }
+            public int Count
+            {
+                get { return _collection.Count; }
+            }
 
-    public int Set(T obj)
-    {
-        _collection.Add(obj);
-        return (_collection.Count - 1);
-    }
-}
+            public T Get(int index)
+            {
+                return _collection[index];
+            }
+
+            public int Set(T obj)
+            {
+                _collection.Add(obj);
+                return (_collection.Count - 1);
+            }
+        }

@@ -1,5 +1,5 @@
 ﻿
-public interface ICollectionSet<T>
-{
-    int Set(T obj);
-}
+    public interface ICollectionSet<in T>
+    {
+        int Set(T obj);
+    }

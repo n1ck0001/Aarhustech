@@ -1,4 +1,6 @@
 ﻿
+using System.Diagnostics;
+
 public class AnimalProcessor
 {
     public void ProcessAnimals(ICollectionGet<Animal> animals)
