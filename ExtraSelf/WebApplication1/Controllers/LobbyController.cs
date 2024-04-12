@@ -56,5 +56,28 @@ namespace WebApplication1.Controllers
             }
 
         }
+
+
+        [HttpGet("GetLobbyAsync/{lobbyId}")]
+        public async Task<ActionResult<Lobby>> GetLobbyAsync([FromRoute]string lobbyId)
+        {
+            try
+            {
+                var lobbyToFetch = await _dbService.Lobbys.Include(l=>l.Players).FirstOrDefaultAsync(l=>l.HostId == lobbyId);
+                if(lobbyToFetch == null)
+                {
+                    // not found 
+                    return NotFound();
+                }
+                else
+                {
+                    return lobbyToFetch;
+                }
+            }
+            catch(Exception ex)
+            {
+                throw ex;
+            }
+        }
     }
 }

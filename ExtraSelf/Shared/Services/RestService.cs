@@ -1,8 +1,10 @@
-﻿using Shared.Classes;
+﻿using Microsoft.AspNetCore.Mvc;
+using Shared.Classes;
 using Shared.Dto;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http.Json;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -61,10 +63,23 @@ namespace Shared.Services
             {
 
             }
+        }
 
-
-
-
+        public async Task<Lobby> GetLobbyAsync(string lobbyId)
+        {
+            Uri uri = new Uri($"{_url}/Lobby/GetLobbyAsync/{lobbyId}");
+            var response = await _httpClient.GetAsync(uri);
+            if (response.IsSuccessStatusCode)
+            {
+                var lobby = await response.Content.ReadFromJsonAsync<Lobby>();
+                return lobby;
+            }
+            else
+            {
+                // return the status code and message sent back from the api as a host id? 
+                return new Lobby { HostId = "Couldent fetch lobby" };
+                   
+            }
         }
     }
 }

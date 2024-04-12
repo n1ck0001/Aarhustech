@@ -36,9 +36,12 @@ else if(joinOrHostGamePlayerChoice == 1)
     var lobby = new Lobby { HostId = lobbyIdInput, Players = new List<Player>(), };
     lobby.Players.Add(newPlayerHost);
 
-    await RestService.HostLobbyAsync(lobby);
+    await RestService.HostLobbyAsync(lobby).ConfigureAwait(false);
 
     // clear redo this if a new player joins to keep the ui updating in real time 
+
+    WaitInLobby(lobby.HostId);
+
     Console.WriteLine("HostId "+lobby.HostId);
     foreach(var player in lobby.Players)
     {
@@ -61,9 +64,23 @@ else if (joinOrHostGamePlayerChoice == 2)
     var hostId = Console.ReadLine();
 
     var joinLobbyRequest = new JoinLobbyDto { Player = joinPlayer, JoinId = hostId };
-
+    await RestService.JoinLobbyAsync(joinLobbyRequest).ConfigureAwait(false);
     // restserice join lobby 
-
+    WaitInLobby(joinLobbyRequest.JoinId);
 }
 
+
+
+
+
+async void WaitInLobby(string lobbyId)
+{
+    var lobbyToPlayIn = await RestService.GetLobbyAsync(lobbyId).ConfigureAwait(false);
+    while (true)
+    {
+        
+    }
+   // fetch lobby form api and await for host to start 
+   // if a new player joins, fetch again to  update. 
+}
 
