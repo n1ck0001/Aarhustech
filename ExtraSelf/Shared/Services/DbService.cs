@@ -13,7 +13,9 @@ namespace Shared.Services
         public DbService() { }
 
         public DbSet<Card> Cards { get; set; }
+        public DbSet<Lobby> Lobbys { get; set;}
 
-        // path to do 
+        protected override void OnConfiguring(DbContextOptionsBuilder options)
+      => options.UseSqlite("Data Source=C:\\Users\\NicolaiPrang\\Desktop\\DbForUno\\Uno.db");         
     }
 }

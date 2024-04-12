@@ -3,6 +3,15 @@
 
 
 using Shared.Classes;
+using Shared.Dto;
+using Shared.Services;
+
+#region Init 
+
+var RestService = new RestService();
+
+#endregion
+
 
 Console.WriteLine("Hejsa!:D");
 Console.WriteLine("1. Host et spil");
@@ -21,15 +30,39 @@ else if(joinOrHostGamePlayerChoice == 1)
     var playerName = Console.ReadLine();
     var newPlayerHost = new Player { Name = playerName, };
 
-    Console.Write("Hvad skal din lobby hedde? --> ");
-    var lobbyName = Console.ReadLine();
+    Console.Write("Hvad skal dit lobbyId? --> ");
+    var lobbyIdInput = Console.ReadLine();
 
-    var lobby = new Lobby { Name = lobbyName, Players = new List<Player>(), };
+    var lobby = new Lobby { HostId = lobbyIdInput, Players = new List<Player>(), };
     lobby.Players.Add(newPlayerHost);
+
+    await RestService.HostLobbyAsync(lobby);
+
+    // clear redo this if a new player joins to keep the ui updating in real time 
+    Console.WriteLine("HostId "+lobby.HostId);
+    foreach(var player in lobby.Players)
+    {
+        Console.WriteLine(player.Name);
+    }
+
+    while (true)
+    {
+
+    }
 
 }
 else if (joinOrHostGamePlayerChoice == 2)
 {
+    Console.Write("Hvad skal din player hedde? --> ");
+    var joinPlayerName = Console.ReadLine();
+    var joinPlayer = new Player { Name = joinPlayerName, };
+
+    Console.Write("Lobby du gerne vil join?(HostId) --> ");
+    var hostId = Console.ReadLine();
+
+    var joinLobbyRequest = new JoinLobbyDto { Player = joinPlayer, JoinId = hostId };
+
+    // restserice join lobby 
 
 }
 

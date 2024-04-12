@@ -9,16 +9,16 @@ namespace Shared.Services
 {
     public class GameService
     {
-        public async Task<Card> DrawACardAsync()
-        {
+        //public async Task<Card> DrawACardAsync()
+        //{
 
 
-            Random random = new Random();
+        //    Random random = new Random();
 
-            int randomCardColor = random.Next(101);
+        //    int randomCardColor = random.Next(101);
 
-            var card = new Card({ }) ;
+        //    var card = new Card({ }) ;
 
-        }
+        //}
     }
 }
