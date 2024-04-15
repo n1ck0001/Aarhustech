@@ -6,15 +6,18 @@ public class Reciter
     /// <summary>
     /// Recites a set of lists of words.
     /// </summary>
-    public static void ReciteAllTheWords()
+    public static async Task ReciteAllTheWords()
     {
         List<string> danish = new List<string> { "En", "To", "Tre", "Fire", "Fem", "Seks", "Syv", "Otte" };
         List<string> english = new List<string> { "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight" };
         List<string> german = new List<string> { "Eins", "Zwei", "Drei", "Vier", "Funf", "Sechs", "Sieben", "Acht" };
 
-        Recite(danish);
-        Recite(english);
-        Recite(german);
+        Task dansktask = Task.Run(() => { Recite(danish); });
+        Task englishTask = Task.Run(()=> { Recite(english); });
+        Task germanTask = Task.Run(() => { Recite(german); });
+
+
+        await Task.WhenAll(dansktask,englishTask, germanTask);  
     }
 
     /// <summary>
