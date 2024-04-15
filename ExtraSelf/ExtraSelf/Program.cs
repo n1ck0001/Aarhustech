@@ -28,8 +28,6 @@ if(joinOrHostGamePlayerChoice != 1 || joinOrHostGamePlayerChoice != 2)
 if(joinOrHostGamePlayerChoice == 1)
 {
 
-
-
     Console.WriteLine("\n");
     Console.Write("Hvad skal din player hedde? --> ");
     var playerName = Console.ReadLine();
@@ -78,21 +76,48 @@ if (joinOrHostGamePlayerChoice == 2)
 
 
 
-async void WaitInLobby(string lobbyId)
+async Task WaitInLobby(string lobbyId)
 {
-    while (true)
+    try
     {
         var lobbyToPlayIn = await RestService.GetLobbyAsync(lobbyId).ConfigureAwait(false);
-        Console.WriteLine(lobbyToPlayIn.HostId);
-        Console.WriteLine("Waiting for host to start the game");
-        foreach(var player in lobbyToPlayIn.Players)
+        while (true)
         {
-            Console.WriteLine(player.Name);
+        refreshScreen:;
+            Console.Clear();
+
+            Console.WriteLine(lobbyToPlayIn.HostId);
+            Console.WriteLine("Waiting for host to start the game");
+            foreach (var player in lobbyToPlayIn.Players)
+            {
+                Console.WriteLine(player.Name);
+            }
+            Console.Write("1. Leave lobby");
+
+        awaitagain:;
+            await Task.Delay(5000);
+            var lobbyHasUpdatedCheck = await RestService.GetLobbyAsync(lobbyId).ConfigureAwait(false);
+            foreach (var player in lobbyHasUpdatedCheck.Players)
+            {
+                // fails 
+                if (!lobbyToPlayIn.Players.Contains(player))
+                {
+                    lobbyToPlayIn = lobbyHasUpdatedCheck;
+                    goto refreshScreen;
+                    break;
+                }
+            }
+            goto awaitagain;
         }
-        Console.ReadLine(); // <-- temp for testing
-        
+
     }
+    catch (Exception ex)
+    {
+        throw ex;
+    }
+   
    // fetch lobby form api and await for host to start 
    // if a new player joins, fetch again to  update. 
 }
+
 

@@ -7,6 +7,7 @@
 /// </summary>
 public class Scenario<T> where T : new()
 {
+
     #region Instance fields
     private QueueWithLimit<T> _queue;
     private Producer<T> _producer;
@@ -44,8 +45,10 @@ public class Scenario<T> where T : new()
     /// <returns></returns>
     public async Task RunAsync()
     {
-        Task taskProduce = Task.Run(() => ProduceWithRandomDelay(_iterations, _producerDelay));
-        Task taskConsume = Task.Run(() => ConsumeWithRandomDelay(_iterations, _consumerDelay));
+        object consoleLock = new object();
+
+        Task taskProduce = Task.Run(() => ProduceWithRandomDelay(_iterations, _producerDelay, consoleLock));
+        Task taskConsume = Task.Run(() => ConsumeWithRandomDelay(_iterations, _consumerDelay, consoleLock));
 
         await taskProduce;
         await taskConsume;
@@ -53,7 +56,7 @@ public class Scenario<T> where T : new()
         _reporter.ReportFinal();
         Console.WriteLine("Done...");
     }
-
+        
     /// <summary>
     /// Performs the specified number of production iterations.
     /// A production iteration consists of:
@@ -61,14 +64,14 @@ public class Scenario<T> where T : new()
     /// 2) Call Report, so the change can be reported.
     /// 3) Wait for a number of milli-seconds (between 0 and maxDelay)
     /// </summary>
-    private async Task ProduceWithRandomDelay(int iterations, int maxDelay)
+    private async Task ProduceWithRandomDelay(int iterations, int maxDelay, object lockker)
     {
         Random rng = new Random();
         for (int i = 0; i < iterations; i++)
         {
             _producer.Produce();
-            _reporter.Report();
-
+            _reporter.Report(lockker);
+            //await Task.Delay(100);
             await Task.Delay(rng.Next(maxDelay));
         }
     }
@@ -80,14 +83,14 @@ public class Scenario<T> where T : new()
     /// 2) Call Report, so the change can be reported.
     /// 3) Wait for a number of milli-seconds (between 0 and maxDelay)
     /// </summary>
-    private async Task ConsumeWithRandomDelay(int iterations, int maxDelay)
+    private async Task ConsumeWithRandomDelay(int iterations, int maxDelay, object lockker)
     {
         Random rng = new Random();
         for (int i = 0; i < iterations; i++)
         {
             _consumer.Consume();
-            _reporter.Report();
-
+            _reporter.Report(lockker);
+            //await Task.Delay(100);
             await Task.Delay(rng.Next(maxDelay));
         }
     }

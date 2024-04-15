@@ -12,6 +12,8 @@ namespace Shared.Services
     {
         public DbService() { }
 
+
+        
         public DbSet<Card> Cards { get; set; }
         public DbSet<Lobby> Lobbys { get; set;}
 

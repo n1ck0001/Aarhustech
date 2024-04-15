@@ -23,7 +23,20 @@ namespace WebApplication1.Controllers
         {
             try
             {
-                foreach(var item in await _dbService.Lobbys.ToListAsync()) { _dbService.Lobbys.Remove(item); }
+                //foreach(var item in await _dbService.Lobbys.ToListAsync()) { _dbService.Lobbys.Remove(item); }
+                var listOfLobbiesToremove = await _dbService.Lobbys.Include(l=>l.Players).ToListAsync();
+                 _dbService.Lobbys.RemoveRange(listOfLobbiesToremove);
+
+
+                //var listofPlayersToRemove = await _dbService.Players.ToListAsync();
+                //_dbService.Players.RemoveRange(listofPlayersToRemove);
+
+                //foreach(var item in listOfLobbiesToremove)
+                //{
+                //    _dbService.Lobbys.Remove(item);
+                //}
+
+                await _dbService.SaveChangesAsync();
                 // temp clearing of any lobbies that are in the table 
                 await _dbService.Lobbys.AddAsync(lobby);
                 await _dbService.SaveChangesAsync();
@@ -36,7 +49,7 @@ namespace WebApplication1.Controllers
         }
 
         [HttpPatch("JoinLobbyAsync")]
-        public async Task JoinLobbyAsync([FromBody]JoinLobbyDto joinLobbyDto)
+        public async Task<ActionResult> JoinLobbyAsync([FromBody]JoinLobbyDto joinLobbyDto)
         {
             try
             {
@@ -44,12 +57,16 @@ namespace WebApplication1.Controllers
                 if(lobbyToJoin == null)
                 {
                     //cant find a obby with that id 
+                    return NotFound();
                 }
                 else
                 {
                     lobbyToJoin.Players.Add(joinLobbyDto.Player);
                     await _dbService.SaveChangesAsync();
+                    return Ok();
                 }
+                return null;
+
 
 
             }
@@ -66,7 +83,7 @@ namespace WebApplication1.Controllers
         {
             try
             {
-                var lobbyToFetch = await _dbService.Lobbys.Include(l=>l.Players).FirstOrDefaultAsync(l=>l.HostId == lobbyId);
+                var lobbyToFetch = await _dbService.Lobbys.Include(l=>l.Players).ThenInclude(p=>p.Cards).FirstOrDefaultAsync(l=>l.HostId == lobbyId);
                 if(lobbyToFetch == null)
                 {
                     // not found 

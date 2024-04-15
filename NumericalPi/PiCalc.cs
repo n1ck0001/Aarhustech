@@ -25,7 +25,7 @@ public class PiCalc
 
         Task.WaitAll(tasks);
 
-        foreach(var  task in tasks)
+        foreach(var task in tasks)
         {
             totalDartsInCircle += task.Result;
         }
