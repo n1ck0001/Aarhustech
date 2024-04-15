@@ -7,10 +7,31 @@ public class PiCalc
     /// </summary>
     /// <param name="iterations">Number of iterations to perform</param>
     /// <returns>Approximate value of pi</returns>
+    /// 
     public double Calculate(int iterations)
     {
-        int insideUnitCircle = Iterate(iterations);
-        return insideUnitCircle * 4.0 / iterations;
+        //int insideUnitCircle = Iterate(iterations);
+        //return insideUnitCircle * 4.0 / iterations;
+
+        int totalDartsInCircle = 0;
+
+        int dartsPrThrower = iterations / 4;
+        Task<int>[] tasks = new Task<int>[4];
+
+        for( int i = 0; i < 4; i++ )
+        {
+            tasks[i] = Task.Run(() => Iterate(dartsPrThrower));
+        }
+
+        Task.WaitAll(tasks);
+
+        foreach(var  task in tasks)
+        {
+            totalDartsInCircle += task.Result;
+        }
+
+        return  (totalDartsInCircle * 4.0) / iterations;
+
     }
 
     /// <summary>
