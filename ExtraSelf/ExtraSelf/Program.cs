@@ -19,16 +19,21 @@ Console.WriteLine("2. Join et spil");
 
 int joinOrHostGamePlayerChoice  = 0;
 int.TryParse(Console.ReadLine(), out joinOrHostGamePlayerChoice);
+
 if(joinOrHostGamePlayerChoice != 1 || joinOrHostGamePlayerChoice != 2)
 {
     // invalid inout 
 }
-else if(joinOrHostGamePlayerChoice == 1)
+
+if(joinOrHostGamePlayerChoice == 1)
 {
+
+
+
     Console.WriteLine("\n");
     Console.Write("Hvad skal din player hedde? --> ");
     var playerName = Console.ReadLine();
-    var newPlayerHost = new Player { Name = playerName, };
+    var newPlayerHost = new Player { Name = playerName, Cards = new List<Card>(),};
 
     Console.Write("Hvad skal dit lobbyId? --> ");
     var lobbyIdInput = Console.ReadLine();
@@ -54,11 +59,11 @@ else if(joinOrHostGamePlayerChoice == 1)
     }
 
 }
-else if (joinOrHostGamePlayerChoice == 2)
+if (joinOrHostGamePlayerChoice == 2)
 {
     Console.Write("Hvad skal din player hedde? --> ");
     var joinPlayerName = Console.ReadLine();
-    var joinPlayer = new Player { Name = joinPlayerName, };
+    var joinPlayer = new Player { Name = joinPlayerName, Cards = new List<Card>(), };
 
     Console.Write("Lobby du gerne vil join?(HostId) --> ");
     var hostId = Console.ReadLine();
@@ -75,9 +80,16 @@ else if (joinOrHostGamePlayerChoice == 2)
 
 async void WaitInLobby(string lobbyId)
 {
-    var lobbyToPlayIn = await RestService.GetLobbyAsync(lobbyId).ConfigureAwait(false);
     while (true)
     {
+        var lobbyToPlayIn = await RestService.GetLobbyAsync(lobbyId).ConfigureAwait(false);
+        Console.WriteLine(lobbyToPlayIn.HostId);
+        Console.WriteLine("Waiting for host to start the game");
+        foreach(var player in lobbyToPlayIn.Players)
+        {
+            Console.WriteLine(player.Name);
+        }
+        Console.ReadLine(); // <-- temp for testing
         
     }
    // fetch lobby form api and await for host to start 

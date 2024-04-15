@@ -7,7 +7,9 @@ using System.Linq;
 using System.Net.Http.Json;
 using System.Text;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace Shared.Services
 {
@@ -16,32 +18,42 @@ namespace Shared.Services
         HttpClient _httpClient;
         string HostId;
         string _url;
+        JsonSerializerOptions _serializerOptions;
         
         public RestService() 
         {
             _url = "PlaceholderId";
             HostId = "PlaceholderId";
             _httpClient = new HttpClient();
+            _serializerOptions = new JsonSerializerOptions();
         }
             
 
         public async Task HostLobbyAsync(Lobby lobby)
         {
-            HostId = lobby.HostId;
-            _url = $"https://localhost:{HostId}";
-
-            Uri uri = new Uri($"{_url}/Lobby/HostLobbyAsync");
-            var json = JsonSerializer.Serialize(lobby);
-            StringContent content = new StringContent(json,Encoding.UTF8, "application/json");
-            var response = await _httpClient.PostAsync(uri,content);
-            if(response.IsSuccessStatusCode)
+            try
             {
+                HostId = lobby.HostId;
+                _url = $"https://localhost:{HostId}";
 
+                Uri uri = new Uri($"{_url}/Lobby/HostLobbyAsync");
+                var json = JsonSerializer.Serialize(lobby, _serializerOptions);
+                StringContent content = new StringContent(json, Encoding.UTF8, "application/json");
+                var response = await _httpClient.PostAsync(uri, content);
+                if (response.IsSuccessStatusCode)
+                {
+
+                }
+                else
+                {
+
+                }
             }
-            else
+            catch(Exception ex)
             {
-
+                throw ex;
             }
+     
         }
 
         public async Task JoinLobbyAsync(JoinLobbyDto joinLobbyDto)

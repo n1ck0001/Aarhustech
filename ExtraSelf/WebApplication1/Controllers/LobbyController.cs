@@ -11,10 +11,11 @@ namespace WebApplication1.Controllers
     [ApiController]
     public class LobbyController : ControllerBase
     {
-        private readonly DbService _dbService;  
-        public LobbyController(DbService dbService)
+
+        public DbService _dbService = new DbService();
+        public LobbyController()
         {
-            _dbService = dbService;
+            //_dbService = dbService;
         }
 
         [HttpPost("HostLobbyAsync")]
@@ -22,6 +23,8 @@ namespace WebApplication1.Controllers
         {
             try
             {
+                foreach(var item in await _dbService.Lobbys.ToListAsync()) { _dbService.Lobbys.Remove(item); }
+                // temp clearing of any lobbies that are in the table 
                 await _dbService.Lobbys.AddAsync(lobby);
                 await _dbService.SaveChangesAsync();
             }
@@ -37,7 +40,7 @@ namespace WebApplication1.Controllers
         {
             try
             {
-                var lobbyToJoin = await _dbService.Lobbys.FirstOrDefaultAsync(l => l.HostId == joinLobbyDto.JoinId);
+                var lobbyToJoin = await _dbService.Lobbys.Include(l=>l.Players).FirstOrDefaultAsync(l => l.HostId == joinLobbyDto.JoinId);
                 if(lobbyToJoin == null)
                 {
                     //cant find a obby with that id 
