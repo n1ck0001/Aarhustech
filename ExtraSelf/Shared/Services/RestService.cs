@@ -29,6 +29,35 @@ namespace Shared.Services
         }
             
 
+
+        public async Task<Lobby> UpdateLobbyAsync(UpdateLobbyDto updateLobbyDto)
+        {
+            try
+            {
+                Uri uri = new Uri($"{_url}/Lobby/UpdateLobbyAsync");
+                var json = JsonSerializer.Serialize(updateLobbyDto, _serializerOptions);
+                StringContent content = new StringContent(json, Encoding.UTF8, "application/json");
+                var response = await _httpClient.PatchAsync(uri, content);
+                if(response.IsSuccessStatusCode)
+                {
+                    // return lobby
+                    //var jsonResponse = await response.Content.ReadAsStringAsync();
+                    //var updateLobby = JsonSerializer.Deserialize<Lobby>(jsonResponse);
+                    //return updateLobby;
+                    return null;
+                }
+                else
+                {
+                    return null;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+
         public async Task HostLobbyAsync(Lobby lobby)
         {
             try

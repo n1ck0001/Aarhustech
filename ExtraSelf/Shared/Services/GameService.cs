@@ -87,6 +87,7 @@ namespace Shared.Services
                 player.Cards.Add(newCard);
 
             }
+
             return player;
         }
     }

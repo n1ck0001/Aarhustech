@@ -178,37 +178,63 @@ async Task Game()
 {
     Console.Clear();
     CurrentPlayer = gameService.GetAStartingHandAsync(CurrentPlayer);
-    foreach(var card in CurrentPlayer.Cards)
+
+    var lobbyDto = new UpdateLobbyDto { HostId = GlobalLobby.HostId, Player = CurrentPlayer};
+    
+     await RestService.UpdateLobbyAsync(lobbyDto);
+    GlobalLobby = await RestService.GetLobbyAsync(GlobalLobby.HostId);
+    GlobalLobby.Players = GlobalLobby.Players.OrderBy(person => person.Name).ToList();
+    CurrentPlayer = GlobalLobby.Players.FirstOrDefault(p => p.Name == CurrentPlayer.Name);
+    foreach (var card in CurrentPlayer.Cards)
     {
-        if(card.Color == "Red")
+        if (card.Color == "Red")
         {
             Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine($"{card.Color} | {card.Value}");
+            Console.WriteLine($"Id: {card.Id} | {card.Color} | {card.Value}");
             Console.ForegroundColor = ConsoleColor.White;
         }
 
         if (card.Color == "Yellow")
         {
             Console.ForegroundColor = ConsoleColor.Yellow;
-            Console.WriteLine($"{card.Color} | {card.Value}");
+            Console.WriteLine($"Id: {card.Id} | {card.Color} | {card.Value}");
             Console.ForegroundColor = ConsoleColor.White;
         }
 
         if (card.Color == "Blue")
         {
             Console.ForegroundColor = ConsoleColor.Blue;
-            Console.WriteLine($"{card.Color} | {card.Value}");
+            Console.WriteLine($"Id: {card.Id} | {card.Color} | {card.Value}");
             Console.ForegroundColor = ConsoleColor.White;
         }
         if (card.Color == "Green")
         {
             Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine($"{card.Color} | {card.Value}");
+            Console.WriteLine($"Id: {card.Id} | {card.Color} | {card.Value}");
             Console.ForegroundColor = ConsoleColor.White;
         }
 
     }
-    Console.ReadLine();
+    foreach (var item in GlobalLobby.Players)
+    {
+        Console.WriteLine($"Player: {item.Name}, is going first");
+        if(CurrentPlayer.Name == item.Name)
+        {
+            // ur going 
+            Console.Write("What card would you like to drop? -->");
+            var dropCard = Console.ReadLine();
+        }
+        else
+        {
+            Console.WriteLine($"Waitng for {item.Name} to play a card");
+            Console.ReadLine();
+            // UR spectating 
+        }
+    }
+   
+
+
+   
 
     // count players
     // create a hand for each player 

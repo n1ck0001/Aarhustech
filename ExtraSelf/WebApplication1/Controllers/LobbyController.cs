@@ -65,7 +65,34 @@ namespace WebApplication1.Controllers
                 throw ex;
             }
 
-        } 
+        }
+
+
+
+        [HttpPatch("UpdateLobbyAsync")]
+        public async Task<Lobby> UpdateLobbyAsync([FromBody]UpdateLobbyDto updateLobbyDto)
+        {
+            try
+            {
+                var lobbytoUpdate = await _dbService.Lobbys.Include(l => l.Players).ThenInclude(p => p.Cards).FirstOrDefaultAsync(l => l.HostId == updateLobbyDto.HostId);
+                if(lobbytoUpdate.Players.Any(p=>p.Name == updateLobbyDto.Player.Name))
+                {
+                    var playerToRemove = lobbytoUpdate.Players.FirstOrDefault(p=>p.Name == updateLobbyDto.Player.Name);
+                    lobbytoUpdate.Players.Remove(playerToRemove);
+                    await _dbService.SaveChangesAsync();
+                }
+                lobbytoUpdate.Players.Add(updateLobbyDto.Player);
+                await _dbService.SaveChangesAsync();
+                return lobbytoUpdate;
+            }
+            catch(Exception ex) 
+            {
+                return null;
+            }
+           
+        }
+
+
 
 
         [HttpGet("GetLobbyAsync/{lobbyId}")]
