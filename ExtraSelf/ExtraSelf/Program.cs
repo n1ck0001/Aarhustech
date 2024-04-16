@@ -12,6 +12,7 @@ var RestService = new RestService();
 
 #endregion
 
+Player CurrentPlayer;
 
 Console.WriteLine("Hejsa!:D");
 Console.WriteLine("1. Host et spil");
@@ -42,6 +43,7 @@ if(joinOrHostGamePlayerChoice == 1)
     await RestService.HostLobbyAsync(lobby).ConfigureAwait(false);
 
     // clear redo this if a new player joins to keep the ui updating in real time 
+    CurrentPlayer = newPlayerHost;
 
     await WaitInLobby(lobby.HostId,true);
 
@@ -58,12 +60,26 @@ if (joinOrHostGamePlayerChoice == 2)
     var joinLobbyRequest = new JoinLobbyDto { Player = joinPlayer, JoinId = hostId };
     await RestService.JoinLobbyAsync(joinLobbyRequest).ConfigureAwait(false);
     // restserice join lobby 
+    CurrentPlayer = joinPlayer;
     await WaitInLobby(joinLobbyRequest.JoinId,false);
 }
 
 
 
 
+async Task<int> ReadInputAsync()
+{
+    while (!Console.KeyAvailable)
+    {
+        await Task.Delay(100); // Check for key press every 100 ms
+    }
+    var keyInfo = Console.ReadKey(intercept: true);
+    if (int.TryParse(keyInfo.KeyChar.ToString(), out int input))
+    {
+        return input;
+    }
+    return -1; // Return -1 or some other value to indicate invalid input
+}
 
 async Task WaitInLobby(string lobbyId, bool isOwner)
 {
@@ -87,13 +103,35 @@ async Task WaitInLobby(string lobbyId, bool isOwner)
                 Console.WriteLine("2. Start game");
             }
             Console.Write("--> ");
-            
         awaitagain:;
-            await Task.Delay(5000);
+
+            Task<int> inputTask = null;
+            if (isOwner)
+            {
+                inputTask = ReadInputAsync();
+            }
+
+            var delayTask = Task.Delay(5000);
+            Task completedTask = inputTask == null ? await Task.WhenAny(delayTask) : await Task.WhenAny(delayTask, inputTask);
+
+            if (completedTask == inputTask && inputTask != null)
+            {
+                int input = await inputTask;
+                if (input == 1)
+                {
+                    // Leave lobby logic here
+                    break;
+                }
+                else if (input == 2)
+                {
+                    await Game(lobbyToPlayIn,CurrentPlayer);
+                    break;
+                }
+            }
+
             var lobbyHasUpdatedCheck = await RestService.GetLobbyAsync(lobbyId).ConfigureAwait(false);
             foreach (var player in lobbyHasUpdatedCheck.Players)
             {
-                // fails 
                 if (!lobbyToPlayIn.Players.Any(p=>p.Id == player.Id))
                 {
                     lobbyToPlayIn = lobbyHasUpdatedCheck;
@@ -108,9 +146,22 @@ async Task WaitInLobby(string lobbyId, bool isOwner)
     {
         throw ex;
     }
+
+
+   
    
    // fetch lobby form api and await for host to start 
    // if a new player joins, fetch again to  update. 
 }
+async Task Game(Lobby lobby, Player player)
+{
+    Console.Clear();
 
+    // count players
+    // create a hand for each player 
+    // random pick player to start 
+    // giveoptions to play a card 
+    // random starting card 
+
+}
 
