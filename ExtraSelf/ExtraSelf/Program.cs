@@ -2,6 +2,7 @@
 //  db task generate hard for eah player 
 
 
+using Microsoft.EntityFrameworkCore;
 using Shared.Classes;
 using Shared.Dto;
 using Shared.Services;
@@ -12,7 +13,13 @@ var RestService = new RestService();
 
 #endregion
 
-Player CurrentPlayer;
+var testDb = new DbService();
+
+
+Player CurrentPlayer = new Player();
+GameService gameService = new GameService();
+Lobby GlobalLobby = new Lobby();    
+var GlobalIsOwner = false;
 
 Console.WriteLine("Hejsa!:D");
 Console.WriteLine("1. Host et spil");
@@ -33,6 +40,7 @@ if(joinOrHostGamePlayerChoice == 1)
     Console.Write("Hvad skal din player hedde? --> ");
     var playerName = Console.ReadLine();
     var newPlayerHost = new Player { Name = playerName, Cards = new List<Card>(),};
+    GlobalIsOwner = true;
 
     Console.Write("Hvad skal dit lobbyId? --> ");
     var lobbyIdInput = Console.ReadLine();
@@ -43,6 +51,7 @@ if(joinOrHostGamePlayerChoice == 1)
     await RestService.HostLobbyAsync(lobby).ConfigureAwait(false);
 
     // clear redo this if a new player joins to keep the ui updating in real time 
+    GlobalLobby = lobby;
     CurrentPlayer = newPlayerHost;
 
     await WaitInLobby(lobby.HostId,true);
@@ -61,6 +70,7 @@ if (joinOrHostGamePlayerChoice == 2)
     await RestService.JoinLobbyAsync(joinLobbyRequest).ConfigureAwait(false);
     // restserice join lobby 
     CurrentPlayer = joinPlayer;
+
     await WaitInLobby(joinLobbyRequest.JoinId,false);
 }
 
@@ -85,15 +95,15 @@ async Task WaitInLobby(string lobbyId, bool isOwner)
 {
     try
     {
-        var lobbyToPlayIn = await RestService.GetLobbyAsync(lobbyId).ConfigureAwait(false);
+        GlobalLobby = await RestService.GetLobbyAsync(lobbyId).ConfigureAwait(false);
         while (true)
         {
         refreshScreen:;
             Console.Clear();
 
-            Console.WriteLine(lobbyToPlayIn.HostId);
+            Console.WriteLine(GlobalLobby.HostId);
             Console.WriteLine("Waiting for host to start the game");
-            foreach (var player in lobbyToPlayIn.Players)
+            foreach (var player in GlobalLobby.Players)
             {
                 Console.WriteLine(player.Name);
             }
@@ -124,7 +134,13 @@ async Task WaitInLobby(string lobbyId, bool isOwner)
                 }
                 else if (input == 2)
                 {
-                    await Game(lobbyToPlayIn,CurrentPlayer);
+                    // add task to tject if game has started for players that arent owner 
+                    // TEMP quick fix 
+                    var lobbytoUpdate = await testDb.Lobbys.FirstOrDefaultAsync(l => l.HostId == GlobalLobby.HostId);
+                    lobbytoUpdate.HasStarted = true;
+                    await testDb.SaveChangesAsync();
+
+                    await Game(); 
                     break;
                 }
             }
@@ -132,11 +148,16 @@ async Task WaitInLobby(string lobbyId, bool isOwner)
             var lobbyHasUpdatedCheck = await RestService.GetLobbyAsync(lobbyId).ConfigureAwait(false);
             foreach (var player in lobbyHasUpdatedCheck.Players)
             {
-                if (!lobbyToPlayIn.Players.Any(p=>p.Id == player.Id))
+                if (!GlobalLobby.Players.Any(p=>p.Id == player.Id))
                 {
-                    lobbyToPlayIn = lobbyHasUpdatedCheck;
+                    GlobalLobby = lobbyHasUpdatedCheck;
+
                     goto refreshScreen;
                     break;
+                }
+                if(lobbyHasUpdatedCheck.HasStarted == true)
+                {
+                    await Game();
                 }
             }
             goto awaitagain;
@@ -153,9 +174,41 @@ async Task WaitInLobby(string lobbyId, bool isOwner)
    // fetch lobby form api and await for host to start 
    // if a new player joins, fetch again to  update. 
 }
-async Task Game(Lobby lobby, Player player)
+async Task Game()
 {
     Console.Clear();
+    CurrentPlayer = gameService.GetAStartingHandAsync(CurrentPlayer);
+    foreach(var card in CurrentPlayer.Cards)
+    {
+        if(card.Color == "Red")
+        {
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine($"{card.Color} | {card.Value}");
+            Console.ForegroundColor = ConsoleColor.White;
+        }
+
+        if (card.Color == "Yellow")
+        {
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            Console.WriteLine($"{card.Color} | {card.Value}");
+            Console.ForegroundColor = ConsoleColor.White;
+        }
+
+        if (card.Color == "Blue")
+        {
+            Console.ForegroundColor = ConsoleColor.Blue;
+            Console.WriteLine($"{card.Color} | {card.Value}");
+            Console.ForegroundColor = ConsoleColor.White;
+        }
+        if (card.Color == "Green")
+        {
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.WriteLine($"{card.Color} | {card.Value}");
+            Console.ForegroundColor = ConsoleColor.White;
+        }
+
+    }
+    Console.ReadLine();
 
     // count players
     // create a hand for each player 

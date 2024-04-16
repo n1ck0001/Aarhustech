@@ -23,18 +23,8 @@ namespace WebApplication1.Controllers
         {
             try
             {
-                //foreach(var item in await _dbService.Lobbys.ToListAsync()) { _dbService.Lobbys.Remove(item); }
                 var listOfLobbiesToremove = await _dbService.Lobbys.Include(l => l.Players).ToListAsync();
                 _dbService.Lobbys.RemoveRange(listOfLobbiesToremove);
-
-
-                //var listofPlayersToRemove = await _dbService.Players.ToListAsync();
-                //_dbService.Players.RemoveRange(listofPlayersToRemove);
-
-                //foreach(var item in listOfLobbiesToremove)
-                //{
-                //    _dbService.Lobbys.Remove(item);
-                //}
 
                 await _dbService.SaveChangesAsync();
                 // temp clearing of any lobbies that are in the table 
