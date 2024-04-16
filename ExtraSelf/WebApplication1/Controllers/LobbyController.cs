@@ -19,13 +19,13 @@ namespace WebApplication1.Controllers
         }
 
         [HttpPost("HostLobbyAsync")]
-        public async Task HostLobbyAsync([FromBody]Lobby lobby)
+        public async Task HostLobbyAsync([FromBody] Lobby lobby)
         {
             try
             {
                 //foreach(var item in await _dbService.Lobbys.ToListAsync()) { _dbService.Lobbys.Remove(item); }
-                var listOfLobbiesToremove = await _dbService.Lobbys.Include(l=>l.Players).ToListAsync();
-                 _dbService.Lobbys.RemoveRange(listOfLobbiesToremove);
+                var listOfLobbiesToremove = await _dbService.Lobbys.Include(l => l.Players).ToListAsync();
+                _dbService.Lobbys.RemoveRange(listOfLobbiesToremove);
 
 
                 //var listofPlayersToRemove = await _dbService.Players.ToListAsync();
@@ -41,20 +41,20 @@ namespace WebApplication1.Controllers
                 await _dbService.Lobbys.AddAsync(lobby);
                 await _dbService.SaveChangesAsync();
             }
-            catch(Exception ex) 
-            { 
+            catch (Exception ex)
+            {
                 throw ex;
             }
 
         }
 
         [HttpPatch("JoinLobbyAsync")]
-        public async Task<ActionResult> JoinLobbyAsync([FromBody]JoinLobbyDto joinLobbyDto)
+        public async Task<ActionResult> JoinLobbyAsync([FromBody] JoinLobbyDto joinLobbyDto)
         {
             try
             {
-                var lobbyToJoin = await _dbService.Lobbys.Include(l=>l.Players).FirstOrDefaultAsync(l => l.HostId == joinLobbyDto.JoinId);
-                if(lobbyToJoin == null)
+                var lobbyToJoin = await _dbService.Lobbys.Include(l => l.Players).FirstOrDefaultAsync(l => l.HostId == joinLobbyDto.JoinId);
+                if (lobbyToJoin == null)
                 {
                     //cant find a obby with that id 
                     return NotFound();
@@ -75,7 +75,7 @@ namespace WebApplication1.Controllers
                 throw ex;
             }
 
-        }
+        } 
 
 
         [HttpGet("GetLobbyAsync/{lobbyId}")]

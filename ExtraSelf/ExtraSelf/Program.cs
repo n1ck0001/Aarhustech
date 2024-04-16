@@ -43,18 +43,7 @@ if(joinOrHostGamePlayerChoice == 1)
 
     // clear redo this if a new player joins to keep the ui updating in real time 
 
-    WaitInLobby(lobby.HostId);
-
-    Console.WriteLine("HostId "+lobby.HostId);
-    foreach(var player in lobby.Players)
-    {
-        Console.WriteLine(player.Name);
-    }
-
-    while (true)
-    {
-
-    }
+    await WaitInLobby(lobby.HostId,true);
 
 }
 if (joinOrHostGamePlayerChoice == 2)
@@ -69,14 +58,14 @@ if (joinOrHostGamePlayerChoice == 2)
     var joinLobbyRequest = new JoinLobbyDto { Player = joinPlayer, JoinId = hostId };
     await RestService.JoinLobbyAsync(joinLobbyRequest).ConfigureAwait(false);
     // restserice join lobby 
-    WaitInLobby(joinLobbyRequest.JoinId);
+    await WaitInLobby(joinLobbyRequest.JoinId,false);
 }
 
 
 
 
 
-async Task WaitInLobby(string lobbyId)
+async Task WaitInLobby(string lobbyId, bool isOwner)
 {
     try
     {
@@ -92,15 +81,20 @@ async Task WaitInLobby(string lobbyId)
             {
                 Console.WriteLine(player.Name);
             }
-            Console.Write("1. Leave lobby");
-
+            Console.WriteLine("1. Leave lobby");
+            if (isOwner)
+            {
+                Console.WriteLine("2. Start game");
+            }
+            Console.Write("--> ");
+            
         awaitagain:;
             await Task.Delay(5000);
             var lobbyHasUpdatedCheck = await RestService.GetLobbyAsync(lobbyId).ConfigureAwait(false);
             foreach (var player in lobbyHasUpdatedCheck.Players)
             {
                 // fails 
-                if (!lobbyToPlayIn.Players.Contains(player))
+                if (!lobbyToPlayIn.Players.Any(p=>p.Id == player.Id))
                 {
                     lobbyToPlayIn = lobbyHasUpdatedCheck;
                     goto refreshScreen;
@@ -109,7 +103,6 @@ async Task WaitInLobby(string lobbyId)
             }
             goto awaitagain;
         }
-
     }
     catch (Exception ex)
     {

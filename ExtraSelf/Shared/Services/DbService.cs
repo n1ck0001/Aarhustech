@@ -13,7 +13,7 @@ namespace Shared.Services
         public DbService() { }
 
 
-        
+        //public DbSet<Player> Players { get; set; }
         public DbSet<Card> Cards { get; set; }
         public DbSet<Lobby> Lobbys { get; set;}
 

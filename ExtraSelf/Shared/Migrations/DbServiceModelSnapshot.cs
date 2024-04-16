@@ -37,7 +37,7 @@ namespace Shared.Migrations
 
                     b.HasIndex("PlayerId");
 
-                    b.ToTable("Cards");
+                    b.ToTable("Cards", (string)null);
                 });
 
             modelBuilder.Entity("Shared.Classes.Lobby", b =>
@@ -52,7 +52,7 @@ namespace Shared.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Lobbys");
+                    b.ToTable("Lobbys", (string)null);
                 });
 
             modelBuilder.Entity("Shared.Classes.Player", b =>
@@ -72,7 +72,7 @@ namespace Shared.Migrations
 
                     b.HasIndex("LobbyId");
 
-                    b.ToTable("Player");
+                    b.ToTable("Player", (string)null);
                 });
 
             modelBuilder.Entity("Shared.Classes.Card", b =>
