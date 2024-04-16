@@ -176,6 +176,7 @@ async Task WaitInLobby(string lobbyId, bool isOwner)
 }
 async Task Game()
 {
+    Card CardOnTheField = new Card();
     Console.Clear();
     CurrentPlayer = gameService.GetAStartingHandAsync(CurrentPlayer);
 
