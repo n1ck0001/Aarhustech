@@ -56,16 +56,14 @@ namespace WebApplication1.Controllers
                     return Ok();
                 }
                 return null;
-
-
-
             }
             catch (Exception ex)
             {
                 throw ex;
             }
-
         }
+
+
 
 
 
@@ -83,6 +81,13 @@ namespace WebApplication1.Controllers
                 }
                 lobbytoUpdate.Players.Add(updateLobbyDto.Player);
                 await _dbService.SaveChangesAsync();
+
+                // detatch a player for context to avoid crashe 
+
+
+
+
+
                 return lobbytoUpdate;
             }
             catch(Exception ex) 

@@ -184,58 +184,93 @@ async Task Game()
     
      await RestService.UpdateLobbyAsync(lobbyDto);
     GlobalLobby = await RestService.GetLobbyAsync(GlobalLobby.HostId);
-    GlobalLobby.Players = GlobalLobby.Players.OrderBy(person => person.Name).ToList();
+    //GlobalLobby.Players = GlobalLobby.Players.OrderBy(person => person.Name).ToList();
     CurrentPlayer = GlobalLobby.Players.FirstOrDefault(p => p.Name == CurrentPlayer.Name);
-    foreach (var card in CurrentPlayer.Cards)
+    var playList = new List<string>();
+    
+    foreach (var player in GlobalLobby.Players)
     {
-        if (card.Color == "Red")
-        {
-            Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine($"Id: {card.Id} | {card.Color} | {card.Value}");
-            Console.ForegroundColor = ConsoleColor.White;
-        }
-
-        if (card.Color == "Yellow")
-        {
-            Console.ForegroundColor = ConsoleColor.Yellow;
-            Console.WriteLine($"Id: {card.Id} | {card.Color} | {card.Value}");
-            Console.ForegroundColor = ConsoleColor.White;
-        }
-
-        if (card.Color == "Blue")
-        {
-            Console.ForegroundColor = ConsoleColor.Blue;
-            Console.WriteLine($"Id: {card.Id} | {card.Color} | {card.Value}");
-            Console.ForegroundColor = ConsoleColor.White;
-        }
-        if (card.Color == "Green")
-        {
-            Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine($"Id: {card.Id} | {card.Color} | {card.Value}");
-            Console.ForegroundColor = ConsoleColor.White;
-        }
-
+        playList.Add(player.Name);
     }
-    foreach (var item in GlobalLobby.Players)
+    playList = playList.OrderBy(name => name).ToList();
+
+    while (true)
     {
-        Console.WriteLine($"Player: {item.Name}, is going first");
-        if(CurrentPlayer.Name == item.Name)
+        foreach (var item in playList)
         {
-            // ur going 
-            Console.Write("What card would you like to drop? -->");
-            var dropCard = Console.ReadLine();
-        }
-        else
-        {
-            Console.WriteLine($"Waitng for {item.Name} to play a card");
-            Console.ReadLine();
-            // UR spectating 
+            Console.Clear();
+            foreach (var card in CurrentPlayer.Cards)
+            {
+                if (card.Color == "Red")
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine($"Id: {card.Id} | {card.Color} | {card.Value}");
+                    Console.ForegroundColor = ConsoleColor.White;
+                }
+
+                if (card.Color == "Yellow")
+                {
+                    Console.ForegroundColor = ConsoleColor.Yellow;
+                    Console.WriteLine($"Id: {card.Id} | {card.Color} | {card.Value}");
+                    Console.ForegroundColor = ConsoleColor.White;
+                }
+
+                if (card.Color == "Blue")
+                {
+                    Console.ForegroundColor = ConsoleColor.Blue;
+                    Console.WriteLine($"Id: {card.Id} | {card.Color} | {card.Value}");
+                    Console.ForegroundColor = ConsoleColor.White;
+                }
+                if (card.Color == "Green")
+                {
+                    Console.ForegroundColor = ConsoleColor.Green;
+                    Console.WriteLine($"Id: {card.Id} | {card.Color} | {card.Value}");
+                    Console.ForegroundColor = ConsoleColor.White;
+                }
+
+            }
+
+            Console.WriteLine($"Player: {item}, is going first");
+            if (CurrentPlayer.Name == item)
+            {
+                try
+                {
+                    Console.Write("What card would you like to drop? --> ");
+
+                    var dropCard = 0;
+                    int.TryParse(Console.ReadLine(), out dropCard);
+                    var cardTodrkll = CurrentPlayer.Cards.FirstOrDefault(c => c.Id == dropCard);
+                    if (cardTodrkll != null)
+                    {
+                        CurrentPlayer.Cards.Remove(cardTodrkll);
+                        UpdateLobbyDto updateCards = new UpdateLobbyDto { HostId = GlobalLobby.HostId, Player = CurrentPlayer };
+                        await RestService.UpdateLobbyAsync(updateCards);
+                        GlobalLobby = await RestService.GetLobbyAsync(GlobalLobby.HostId);
+                        //GlobalLobby.Players = GlobalLobby.Players.OrderBy(person => person.Name).ToList();
+                        CurrentPlayer = GlobalLobby.Players.FirstOrDefault(p => p.Name == CurrentPlayer.Name);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    throw ex;
+                }
+                // ur going 
+            }
+            else
+            {
+                Console.WriteLine($"Waitng for {item} to play a card");
+                Console.ReadLine();
+                // UR spectating 
+                // wait for thjem to do stuff and update output ofr players who arent doig nshit 
+            }
         }
     }
-   
+    
 
 
-   
+    // temp adding aboliti to dro card by id ( temp as u can drop any card as kong as it got the correct id 
+
+
 
     // count players
     // create a hand for each player 

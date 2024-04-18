@@ -11,7 +11,6 @@ namespace Shared.Classes
 
         public int Id { get; set; }
         public string HostId { get; set; }
-        //public Player PlayerLobbyHost { get; set; }
         public List<Player> Players { get; set; }
         public bool HasStarted { get; set; }
 
