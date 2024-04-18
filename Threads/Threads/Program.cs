@@ -1,73 +1,65 @@
-﻿// See https://aka.ms/new-console-template for more information
-Console.WriteLine("Hello, World!");
-
-
-int id = 5;
-int id2 = 2;
-int Increment = 0;
-
-string threadNUmber1 = "Thread number 1";
-string threadNUmber = "Thread number 2";
-
-
-Thread newThread = new Thread(() => ThreadMethod(id, threadNUmber1));
-
-Thread newThread2 = new Thread(() => ThreadMethod(id2, threadNUmber));
-newThread.Start();
-newThread2.Start();
-
-
-
-newThread.Join();
-newThread2.Join();
-
-Console.WriteLine("Done");
-
-
-static void ThreadMethod(int id, string message)
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+namespace Threads
 {
-    for (int i = 0; i < 10; i++)
+    class Program
     {
-        Console.WriteLine($"{i} {id}, {message}");
-    }
-}
-object lockObject = new object();
-
-Thread CounterThread = new Thread(() => IncrementThread());
-
-Thread CounterThread2 = new Thread(() => IncrementThread2());
-
-CounterThread.Start();
-CounterThread2.Start();
-
-CounterThread2.Join();
-CounterThread.Join();
-
-
-
-void IncrementThread()
-{
-    for (int i = 0; i < 100; i++)
-    {
-        lock (lockObject) 
+        static void Main(string[] args)
         {
-            Increment++;
-            Console.WriteLine($"Incremented to {Increment}");
+            Console.WriteLine("Learning about threads");
+
+            int s = GetMicroSleep();
+            int numberOfThreads = GetNumberOfThreads();
+            Vector sharedVector = new Vector(); 
+            Thread[] threads = new Thread[numberOfThreads];
+
+            for (int i = 0; i < numberOfThreads; i++)
+            {
+                int threadId = i + 1;
+                threads[i] = new Thread(() => ThreadFunction(sharedVector, threadId, s));
+                threads[i].Start();
+            }
+
+            Console.WriteLine("All threads started. Press any key to exit.");
+            Console.ReadKey();
+
+            foreach (Thread thread in threads)
+            {
+                thread.Join(); 
+            }
         }
-        Thread.Sleep(100);  
-    }
-}
-void IncrementThread2()
-{
-    for (int i = 0; i < 100; i++)
+
+    static void ThreadFunction(Vector vector, int id, int microSleep)
     {
-        lock (lockObject)  
+        Stopwatch stopwatch = new Stopwatch();
+        while (true)
         {
-            Console.WriteLine($"Read by Thread 2: {Increment}");
+            if (!vector.SetAndTest(id))
+            {
+                Console.WriteLine($"Error: Thread {id} found inconsistency in vector.");
+            }
+
+            stopwatch.Restart();
+                while (stopwatch.ElapsedTicks < microSleep * (Stopwatch.Frequency / (1000 * 1000)))
+                    Thread.Yield();
         }
-        Thread.Sleep(100);  
+    }
+
+    static int GetMicroSleep()
+    {
+        Console.WriteLine("Enter the sleep time in microseconds:");
+        return Convert.ToInt32(Console.ReadLine());
+    }
+
+    static int GetNumberOfThreads()
+        {
+            Console.WriteLine("Enter the number of threads (1-100):");
+            int number = Convert.ToInt32(Console.ReadLine());
+            return number;
+        }
     }
 }
-
-
-
