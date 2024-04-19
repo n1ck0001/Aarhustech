@@ -127,27 +127,40 @@ while (true)
         {
             var car = tasks[completedTask];
             tasks.Remove(completedTask);
-            Console.ForegroundColor= ConsoleColor.Yellow;
-            Console.WriteLine($"Car is requesting parking {car.Model}");
+            Console.ForegroundColor = ConsoleColor.Cyan;
+            Console.Write($"{car.Model}");
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            Console.WriteLine($" is requesting parking");
             Console.ForegroundColor = ConsoleColor.White;
             var granted = await parkingService.RequestParkingAsync(parkingLot);
             if (granted)
             {
                 Console.ForegroundColor = ConsoleColor.Green;
-                Console.WriteLine($"Parking granted for {car.Model}. Parking now...");
+                Console.Write($"Parking granted for ");
+                Console.ForegroundColor = ConsoleColor.Cyan;
+                Console.Write($"{car.Model}");
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.WriteLine($" Parking now...");
                 Console.ForegroundColor = ConsoleColor.White;
                 await parkingService.ParkCarAsync(car, parkingLot);
                 var parkTask = parkingService.CarIsCurrentlyParked(car.ParkingTime);
                 tasksForParkedCards.Add(parkTask, car);
+
+                Console.ForegroundColor = ConsoleColor.Cyan;
+                Console.Write($"{car.Model}");
                 Console.ForegroundColor = ConsoleColor.DarkGreen;
-                Console.WriteLine($"Car was parked successfully {car.Model}");
+                Console.WriteLine($" was parked successfully");
                 Console.ForegroundColor = ConsoleColor.White;
             }
             else
             {
                 Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine($"Parking denied for {car.Model}. Requeuing...");
-                Console.ForegroundColor = ConsoleColor.Yellow;
+                Console.Write($"Parking denied for ");
+                Console.ForegroundColor = ConsoleColor.Cyan;
+                Console.Write($"{car.Model}");
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine($". Requeuing...");
+                Console.ForegroundColor = ConsoleColor.White;
                 var newTask = parkingService.QueCarAsync(car.QueTime);
                 tasks.Add(newTask, car);
             }
@@ -156,9 +169,47 @@ while (true)
         {
             var car = tasksForParkedCards[completedTask];
             tasksForParkedCards.Remove(completedTask);
+            Console.ForegroundColor = ConsoleColor.Cyan;
+            Console.Write($"{car.Model}");
             Console.ForegroundColor = ConsoleColor.Blue;
-            Console.WriteLine($"Car is leaving lot {car.Model}");
+            Console.WriteLine($" is leaving the lot");
             Console.ForegroundColor = ConsoleColor.White;
+            Random random = new Random();
+            var num = random.Next(0, 101);
+            // ParkeringsVagter ;))) 
+            if (num == 96 || num == 25 || num == 9)
+            {
+                Console.ForegroundColor = ConsoleColor.Magenta;
+                Console.Write("+ ");
+                Console.ForegroundColor = ConsoleColor.Cyan;
+                Console.Write($"{car.Model}");
+                Console.ForegroundColor = ConsoleColor.Magenta;
+                Console.WriteLine($", Got a fine for parking incorrectly");
+                Console.ForegroundColor = ConsoleColor.White;
+            }
+
+            if (num == 69 || num == 44 || num == 36)
+            {
+                Console.ForegroundColor = ConsoleColor.Magenta;
+                Console.Write("+ ");
+                Console.ForegroundColor = ConsoleColor.Cyan;
+                Console.Write($"{car.Model}");
+                Console.ForegroundColor = ConsoleColor.Magenta;
+                Console.WriteLine($", Got a fine for parking for too long");
+                Console.ForegroundColor = ConsoleColor.White;
+            }
+          
+            if (num == 19 || num == 21 || num == 20)
+            {
+                Console.ForegroundColor = ConsoleColor.Magenta;
+                Console.Write("+ ");
+                Console.ForegroundColor = ConsoleColor.Cyan;
+                Console.Write($"{car.Model}");
+                Console.ForegroundColor = ConsoleColor.Magenta;
+                Console.WriteLine($", Got a fine for not buying a ticket");
+                Console.ForegroundColor = ConsoleColor.White;
+            }
+
             await parkingService.LeaveParkingLot(parkingLot, car);
             var queueTask = parkingService.QueCarAsync(car.QueTime);
             tasks.Add(queueTask, car);
