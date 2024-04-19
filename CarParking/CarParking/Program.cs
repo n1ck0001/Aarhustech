@@ -4,7 +4,7 @@ using CarParking.Classes;
 Console.WriteLine("Welcome to parking lot");
 Console.WriteLine("Creating cars");
 
-var parkingLot = new ParkingLot { Name = "ParkingLot1", TotalSpaces = 1, ParkedCars= new List<Car>() };
+var parkingLot = new ParkingLot { Name = "ParkingLot1", TotalSpaces = 3, ParkedCars= new List<Car>() };
 var parkingService = new ParkingService();
 var car1 = new Car { Model = "Model1", ParkingTime = 1000000, Color = "Red" , QueTime = 3000};
 var car2 = new Car { Model = "Model2", ParkingTime = 35162, Color = "Blue" , QueTime = 7000};

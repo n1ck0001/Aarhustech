@@ -40,10 +40,15 @@ namespace Threads
         {
             if (!vector.SetAndTest(id))
             {
-                Console.WriteLine($"Error: Thread {id} found inconsistency in vector.");
-            }
-
-            stopwatch.Restart();
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine($"Error: Thread {id} found inconsistency in vector.");
+                    Console.ForegroundColor = ConsoleColor.White;
+                    Console.ReadLine();
+                }
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.WriteLine("No issues");
+                Console.ForegroundColor = ConsoleColor.White;
+                stopwatch.Restart();
                 while (stopwatch.ElapsedTicks < microSleep * (Stopwatch.Frequency / (1000 * 1000)))
                     Thread.Yield();
         }
